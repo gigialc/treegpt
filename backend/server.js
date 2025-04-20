@@ -8,25 +8,34 @@ const userRoutes = require('./routes/userRoutes');
 const conversationRoutes = require('./routes/conversationRoutes');
 
 const app = express();
-const port = 3001;
-
+const port = process.env.PORT || 3001;
 
 // Connect to MongoDB
 connectDB();
 
 // Global middleware
 app.use(cors({
-  origin: 'http://localhost:3000',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: '*',
+  methods: '*',
+  allowedHeaders: '*',
 }));
 app.use(express.json());
+
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.status(200).send('TreeGPT API is running');
+});
 
 // Mount routes
 app.use('/auth', userRoutes);         // Endpoints: /auth/register, /auth/login
 app.use('/conversations', conversationRoutes); // Endpoint: /conversations
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// Start server if not in test mode
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
+
+// Export the app for testing or other imports
+module.exports = app;
