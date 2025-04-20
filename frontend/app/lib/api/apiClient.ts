@@ -7,7 +7,7 @@ class ApiClient {
   private baseUrl: string;
   
   constructor(baseUrl = API_BASE_URL) {
-    this.baseUrl = baseUrl;
+    this.baseUrl = baseUrl || 'https://treegpt.onrender.com'; // Provide default fallback value
   }
 
   /**
